@@ -12,7 +12,7 @@ services:
           default:
             connector: mongo
             migrations: true
-            uri: mongodb+srv://summa:summa123@summa-igyo1.mongodb.net/test?retryWrites=true&w=majority
+            uri: <uri>
 #  mongodb:
 #    image: mongo:latest
 #    environment:
