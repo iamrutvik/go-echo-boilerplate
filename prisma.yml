@@ -1,0 +1,9 @@
+endpoint: http://localhost:4466
+datamodel:
+  - datamodels/users.prisma
+databaseType: document
+generate:
+  - generator: go-client
+    output: ./prisma-client/
+  - generator: graphql-schema
+    output: ./prisma-client/prisma.graphql

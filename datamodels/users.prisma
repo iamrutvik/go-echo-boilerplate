@@ -1,0 +1,32 @@
+enum LoginSource {
+    FACEBOOK
+    GOOGLE
+    APPLE
+    LOCAL
+}
+
+enum UserType {
+    PUBLISHER
+    ADVERTISER
+    USER
+    ADMIN
+    ADMIN_RESTRICTED
+}
+
+type User @db(name: "users") {
+  id: ID! @id
+  firstName: String!
+  lastName: String!
+  email: String! @unique
+  mobile: String! @unique
+  birthday: DateTime
+  password: String!
+  profilePicture: String!
+  userType: UserType! @default(value: USER)
+  loginSource: LoginSource! @default(value: LOCAL)
+  isVerified: Boolean! @default(value: false)
+  isActive: Boolean! @default(value: true)
+  otp: Int
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}

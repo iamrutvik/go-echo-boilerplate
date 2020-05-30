@@ -1,0 +1,9 @@
+application:
+  name: "Summa Auth API"
+  jwtExpiresAt: 72
+
+server:
+  port: 8000
+  tls: true
+  certfile: "./cert.pem"
+  keyfile: "./key.pem"

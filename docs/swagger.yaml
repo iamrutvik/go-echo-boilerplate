@@ -1,0 +1,125 @@
+basePath: /api/v1
+definitions:
+  models.User:
+    properties:
+      birthday:
+        type: string
+      email:
+        type: string
+      firstName:
+        type: string
+      isActive:
+        type: boolean
+      isVerified:
+        type: boolean
+      lastName:
+        type: string
+      loginSource:
+        type: string
+      mobile:
+        type: string
+      otp:
+        type: integer
+      password:
+        type: string
+      profilePicture:
+        type: string
+      userType:
+        type: string
+    required:
+    - email
+    - firstName
+    - lastName
+    - loginSource
+    - mobile
+    - password
+    - userType
+    type: object
+  v1.JSONResult:
+    properties:
+      data:
+        type: object
+      error:
+        type: object
+      message:
+        type: string
+      status:
+        type: boolean
+    type: object
+host: localhost:8000
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: Auth Service.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Summa Auth API
+  version: "1.0"
+paths:
+  /api/v1/signup:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user
+      parameters:
+      - description: Add user
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User Response, it will also return Token and hides Password and OTP
+          schema:
+            allOf:
+            - $ref: '#/definitions/v1.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.User'
+              type: object
+        "400":
+          description: Validation error response with message
+          schema:
+            $ref: '#/definitions/v1.JSONResult'
+        "500":
+          description: Internal Server error response with message
+          schema:
+            $ref: '#/definitions/v1.JSONResult'
+      summary: Sign up
+      tags:
+      - Authentication
+  /test:
+    get:
+      consumes:
+      - application/json
+      description: do ping
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: pong
+          schema:
+            type: string
+        "400":
+          description: ok
+          schema:
+            type: string
+        "404":
+          description: ok
+          schema:
+            type: string
+        "500":
+          description: ok
+          schema:
+            type: string
+      summary: ping example
+      tags:
+      - Status
+swagger: "2.0"
