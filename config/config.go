@@ -8,7 +8,8 @@ type (
 	}
 	ApplicationConfigurations struct {
 		Name        string
-		JWTExpireAt int
+		JWTExpires  int
+		JWTSecret	string
 	}
 	ServerConfigurations struct {
 		Port int
@@ -17,3 +18,5 @@ type (
 		KeyFile string
 	}
 )
+
+var Settings Configurations

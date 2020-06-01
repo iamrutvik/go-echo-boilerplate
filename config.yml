@@ -1,6 +1,7 @@
 application:
   name: "Summa Auth API"
-  jwtExpiresAt: 72
+  jwtExpires: 500
+  jwtSecret: "summasumma"
 
 server:
   port: 8000

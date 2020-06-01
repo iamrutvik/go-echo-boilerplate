@@ -6,13 +6,13 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
+	"github.com/spf13/viper"
 	"github.com/swaggo/echo-swagger" // echo-swagger middleware
 	"io"
 	"net/http"
 	"strconv"
-	"summa-auth-api/config"
+	Config "summa-auth-api/config"
 	_ "summa-auth-api/docs"
-	Helpers "summa-auth-api/helpers"
 	Router "summa-auth-api/routes"
 )
 // @title Summa Auth API
@@ -53,10 +53,38 @@ func main() {
 	}
 
 	//Load config
-	Configuration, err := Helpers.LoadConfig()
-	if err != nil {
-		e.Logger.Fatalf("Error loading Config - %s", err)
+	// Start viper implementation - reading configurations from configurations.yaml
+	// Set the file name of the configurations file
+	viper.SetConfigName("config")
+
+	// Set the path to look for the configurations file
+	viper.AddConfigPath(".")
+
+	// Enable VIPER to read Environment Variables
+	viper.AutomaticEnv()
+
+	viper.SetConfigType("yaml")
+
+
+	if err := viper.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			e.Logger.Fatalf("Config file not found at root ./config.yml")
+		} else {
+			e.Logger.Fatalf("Error reading config file at root ./config.yml")
+		}
 	}
+
+	//setting defaults in case of undefined
+	viper.SetDefault("server.port", "8000")
+	viper.SetDefault("server.certfile", "./cert.pem")
+	viper.SetDefault("server.keyfile", "./key.pem")
+
+	//Decoding viper configurations to struct configuration from ./configurations/configurations.go
+	err := viper.Unmarshal(&Config.Settings)
+	if err != nil {
+		e.Logger.Fatalf("Unable to decode into struct")
+	}
+	//End Viper implementation
 
 	//can be done via `log` as well. log.SetLevel(log.DEBUG)
 	//log.Infof("Server running on http://localhost%s 🐹", ":4000")
@@ -79,7 +107,7 @@ func main() {
 	e.Validator = &CustomValidator{validator: validator.New()}
 
 	// loads Routes
-	Router.Load(Configuration, e)
+	Router.Load(e)
 	//Loading Swagger Route
 	e.GET("/docs/*", echoSwagger.WrapHandler)
 
@@ -91,19 +119,19 @@ func main() {
 		It should be installed under "System" certificates in the left pane with name "Acme Co"
 		Click on it, Go to Trust and Select Trust always
 	 */
-	startServer(Configuration, e)
+	startServer(e)
 }
 
-func startServer(configuration config.Configurations, e *echo.Echo) {
-	if configuration.Server.TLS {
-		e.Logger.Infof("Server running on https://localhost:%v 🐹", configuration.Server.Port)
+func startServer(e *echo.Echo) {
+	if Config.Settings.Server.TLS {
+		e.Logger.Infof("Server running on https://localhost:%v 🐹", Config.Settings.Server.Port)
 		e.Logger.Fatal(
-			e.StartTLS(":" + strconv.Itoa(configuration.Server.Port),
-				configuration.Server.CertFile,
-				configuration.Server.KeyFile))
+			e.StartTLS(":" + strconv.Itoa(Config.Settings.Server.Port),
+				Config.Settings.Server.CertFile,
+				Config.Settings.Server.KeyFile))
 	} else {
-		e.Logger.Infof("Server running on http://localhost:%v 🐹", configuration.Server.Port)
-		e.Logger.Fatal(e.Start(":" + strconv.Itoa(configuration.Server.Port)))
+		e.Logger.Infof("Server running on http://localhost:%v 🐹", Config.Settings.Server.Port)
+		e.Logger.Fatal(e.Start(":" + strconv.Itoa(Config.Settings.Server.Port)))
 	}
 }
 

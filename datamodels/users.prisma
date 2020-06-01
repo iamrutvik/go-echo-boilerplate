@@ -24,7 +24,7 @@ type User @db(name: "users") {
   profilePicture: String!
   userType: UserType! @default(value: USER)
   loginSource: LoginSource! @default(value: LOCAL)
-  isVerified: Boolean! @default(value: false)
+  isVerified: Boolean! @default(value: true)
   isActive: Boolean! @default(value: true)
   otp: Int
   createdAt: DateTime! @createdAt

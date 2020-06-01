@@ -3,12 +3,12 @@ package routes
 import (
 	"github.com/labstack/echo/v4"
 	"net/http"
-	"summa-auth-api/config"
+	Config "summa-auth-api/config"
 )
 
-func Load(configuration config.Configurations, e *echo.Echo){
+func Load(e *echo.Echo){
 	e.GET("/", func (c echo.Context) error {
-		return c.JSON(http.StatusOK, map[string] interface{} {"status": true, "message": configuration.Application.Name + " running"})
+		return c.JSON(http.StatusOK, map[string] interface{} {"status": true, "message": Config.Settings.Application.Name + " running"})
 	})
 
 	//add index function for each API version in below slice
